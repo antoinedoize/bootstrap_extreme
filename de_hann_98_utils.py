@@ -31,7 +31,7 @@ def get_bootstrap_variance_de_hann_98(sample,
         control_variate = gamma_moment_2 - gamma_moment_1
         std_estimator_list.append(control_variate)
     std_estimator = np.std(std_estimator_list)
-    return std_estimator
+    return std_estimator*k0_opti**(1/2)
 
 
 def find_argmin_Q(n1_bootstrap, sample,
@@ -70,17 +70,6 @@ def find_argmin_Q(n1_bootstrap, sample,
 # sample = get_frechet_sample(inv_gamma, size_sample)
 # find_argmin_Q(500, sample, plot_q_currents=True)
 
-
-def test_plot_q_minimization(n1_bootstrap, sample, nb_minimizations):
-    # We try several (nb_minimizations) minimizations but with same sample (thus not monte-carlo, but only minimization test)
-    list_argmin_k = list()
-    for i in tqdm(range(nb_minimizations)):
-        argmin_k = find_argmin_Q(n1_bootstrap, sample, plot_q_currents=True)
-        list_argmin_k.append(argmin_k)
-    plt.hist(list_argmin_k)
-    plt.title("Histogram of k minimization")
-    plt.show()
-    return list_argmin_k
 
 # # Test plot_q_minimization
 # inv_gamma = 3

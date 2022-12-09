@@ -1,7 +1,6 @@
 from extreme_utils import *
-
-
 import numpy as np
+import scipy.stats
 
 
 def r(n):
@@ -55,7 +54,8 @@ def get_bootstrap_variance_kulik(sample,
                                  k0_opti):
     mult_hill_list = multiplier_estimations(sample, k0_opti, nb_bootstrap)
     mult_hill_list = sorted(mult_hill_list)
-    q84_ind, q16_ind = int(16/100*len(mult_hill_list)), int(84/100*len(mult_hill_list))
-    q84, q16 = mult_hill_list[q84_ind], mult_hill_list[q16_ind]
-    std_estimator = (q16 - q84)/2
-    return std_estimator
+    q25_ind, q75_ind = int(25/100*len(mult_hill_list)), int(75/100*len(mult_hill_list))
+    q75, q25 = mult_hill_list[q75_ind], mult_hill_list[q25_ind]
+    qn_75, qn_25 = scipy.stats.norm.ppf(0.75), scipy.stats.norm.ppf(0.25)
+    std_estimator = (q75 - q25)/(qn_75 - qn_25)
+    return std_estimator*k0_opti**(1/2)

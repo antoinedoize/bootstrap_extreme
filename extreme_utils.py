@@ -2,6 +2,8 @@ import numpy as np
 from scipy.stats import t, invweibull, genextreme
 import matplotlib.pyplot as plt
 import json
+from random import choices
+from tqdm.notebook import tqdm
 
 
 ### Simulation variables de Student
@@ -70,9 +72,6 @@ def get_frechet_sample(inv_gamma, size_sample, get_plot=False, log_plot=False, n
 ### On définit les estimateurs de gamma de de Haan 1998
 ### On définit l'estimateur de la variance asymptotique
 ### on minimise cet estimateur par rapport à k pour une taille de bootstrap donnée
-
-from random import choices
-from tqdm.notebook import tqdm
 
 
 def gamma_moment_1_estimator(k, sample):
