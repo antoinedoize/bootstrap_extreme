@@ -172,7 +172,7 @@ def run_variance_vs_size_sample_from_config(config_path,
     plt.title("k_order_statistic for each step")
     plt.legend()
     plt.savefig(path_run+"\\k_order_statistic_for_each_step.jpg")
-    # plt.clf()
+    plt.clf()
 
 
 def run_config_file(config_path):
