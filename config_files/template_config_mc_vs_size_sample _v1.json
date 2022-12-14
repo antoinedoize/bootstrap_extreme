@@ -1,6 +1,6 @@
 {
     "name": "test_config_mc_vs_size_sample_test",
-    "format_config": "v0",
+    "format_config": "v1",
     "function_to_run": "run_variance_vs_size_sample_from_config",
 
     "run_variance_vs_size_sample_from_config": {

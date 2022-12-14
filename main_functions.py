@@ -91,15 +91,29 @@ def get_monte_carlo_methods_std_for_a_step(nb_monte_carlo_steps,
             output_dict["hill_estimator_denormalized_list"].append(hill_estimator_denormalized)
             continue
     output_dict["monte_carlo_std"] = np.std(output_dict["hill_estimator_denormalized_list"])
+    first_time_auto_k_order_for_given_sample = True
     # Pour chaque méthode on va calculer le bootstrap std
     for method in list_methods:
         method_function = method_name_to_function[method["method"]]
+        method_k_order_statistics_ratio = method["k_order_statistics_ratio"]
+        if method_k_order_statistics_ratio == "version2": # We use auto k order statistics
+            if first_time_auto_k_order_for_given_sample:
+                # If order statistics never computed for this sample: compute it
+                auto_k_order_for_this_sample = int(de_haan_1998(sample))
+                first_time_auto_k_order_for_given_sample = False
+                method_k_order_statistics = auto_k_order_for_this_sample
+            else: # We already computed auto order for this sample
+                method_k_order_statistics = auto_k_order_for_this_sample
+        else: # We use defined order statistics
+            method_k_order_statistics = int(method_k_order_statistics_ratio*size_sample)
         size_sample_bootstrap_ratio = method["size_sample_bootstrap_ratio"]
+        ratio_method_btstrp_order = int(method_k_order_statistics*size_sample_bootstrap_ratio)
+        ratio_sample_size = int(size_sample*size_sample_bootstrap_ratio)
         std_method = method_function(sample, nb_bootstrap_steps,
-                                      int(size_sample*size_sample_bootstrap_ratio), 
-                                      int(k_order_statistic*size_sample_bootstrap_ratio))
-        output_dict[method["method_name"] + "_std"] = std_method
-    output_dict["bootstrap_k_order_statistic"] = k_order_statistic
+                                      ratio_sample_size, 
+                                      ratio_method_btstrp_order)
+        output_dict[method["method_name"]+"_std"] = std_method
+        output_dict[method["method_name"]+"_bootstrap_k_order_statistic"] = ratio_method_btstrp_order
 
     output_dict["mc_mean_k_order_statistic"] = np.mean(output_dict["k_order_statistic_mc_list"])
     ratio = ratio / nb_monte_carlo_steps
@@ -139,11 +153,11 @@ def run_variance_vs_size_sample_from_config(config_path,
     k_order_statistics_ratio = config["run_variance_vs_size_sample_from_config"]["k_order_statistics_ratio"]
     std_vs_size_dict = {
     "monte_carlo_std": list(),
-    "bootstrap_k_order_statistic": list(),
     "mc_mean_k_order_statistic": list()
     }
     for d in list_methods:
         std_vs_size_dict[d["method_name"]+"_std"] = list() 
+        std_vs_size_dict[d["method_name"]+"_bootstrap_k_order_statistic"] = list()
     size_sample_ranges = config["run_variance_vs_size_sample_from_config"]["size_sample_ranges"]
     size_samples = np.sum([list(range(*l)) for l in size_sample_ranges])
     
@@ -167,7 +181,9 @@ def run_variance_vs_size_sample_from_config(config_path,
     plt.legend()
     plt.savefig(path_run+"\\Standard_deviation_vs_size_sample.jpg")
     plt.clf()
-    plt.plot(size_samples, std_vs_size_dict["bootstrap_k_order_statistic"], label="bootstrap_k_order_statistic")
+    for d in list_methods:
+        method_k_order_name = d["method_name"] + "_bootstrap_k_order_statistic"
+        plt.plot(size_samples, std_vs_size_dict[method_k_order_name], label=method_k_order_name)
     plt.plot(size_samples, std_vs_size_dict["mc_mean_k_order_statistic"], label="mc_mean_k_order_statistic")
     plt.title("k_order_statistic for each step")
     plt.legend()
