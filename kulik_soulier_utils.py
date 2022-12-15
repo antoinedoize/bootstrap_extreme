@@ -19,6 +19,21 @@ def get_blocks(sample):
     return block_list
 
 
+def get_poisson_weights(nb_weights):
+    # CHOIX : On a choisi la loi de Poisson(1)
+    return np.random.poisson(1, nb_weights)
+
+
+def get_gaussian_weights(nb_weights):
+    # Choix : we choose gaussian distribution with mean 1
+    return np.random.normal(1,1,nb_weights)
+
+
+def get_exponential_weights(nb_weights):
+    # Choix : we choose exponential distribution with mean 1
+    return np.random.exponential(1,nb_weights)
+
+
 def get_multiplier_version_hill(sample, k0_opti, block_weights):
     num, denom = 0, 0
     block_list = get_blocks(sample)
@@ -37,22 +52,31 @@ def get_multiplier_version_hill(sample, k0_opti, block_weights):
     return num/denom
 
 
-def multiplier_estimations(sample, k0_opti, nb_boostraps):
+def multiplier_estimations(sample, k0_opti, nb_boostraps,
+                             weight_distribution):
+    distribution_name_to_function = {
+        "poisson": get_poisson_weights,
+        "gaussian": get_gaussian_weights,
+        "exponential": get_exponential_weights
+    }
+    get_weights = distribution_name_to_function[weight_distribution]
     n = len(sample)
     nb_weights = int(n/r(n))
     mult_hill_list = list()
     for i in range(nb_boostraps):
-        block_weights = np.random.poisson(1, nb_weights) # CHOIX : On a choisi la loi de Poisson(1)
+        block_weights = get_weights(nb_weights)
         mult_hill = get_multiplier_version_hill(sample, k0_opti, block_weights)
         mult_hill_list.append(mult_hill)
     return mult_hill_list
 
 
-def get_bootstrap_variance_kulik(sample,
+def get_bootstrap_variance_kulik(method, sample,
                                  nb_bootstrap,
                                  bootstrap_size,
                                  k0_opti):
-    mult_hill_list = multiplier_estimations(sample, k0_opti, nb_bootstrap)
+    weight_distribution = method["weight_distribution"]
+    mult_hill_list = multiplier_estimations(sample, k0_opti, nb_bootstrap,
+                                            weight_distribution)
     mult_hill_list = sorted(mult_hill_list)
     q25_ind, q75_ind = int(25/100*len(mult_hill_list)), int(75/100*len(mult_hill_list))
     q75, q25 = mult_hill_list[q75_ind], mult_hill_list[q25_ind]

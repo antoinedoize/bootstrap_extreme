@@ -166,7 +166,7 @@ def get_methods_std_for_a_step(nb_monte_carlo_steps,
             size_sample_bootstrap_ratio = method["size_sample_bootstrap_ratio"]
             ratio_method_btstrp_order = int(method_k_order_statistics*size_sample_bootstrap_ratio)
             ratio_sample_size = int(size_sample*size_sample_bootstrap_ratio)
-            std_method = method_function(bootstrap_sample, nb_bootstrap_steps,
+            std_method = method_function(method, bootstrap_sample, nb_bootstrap_steps,
                                         ratio_sample_size, 
                                         ratio_method_btstrp_order)
             output_dict[method_name+"_k_order_statistic"] = ratio_method_btstrp_order

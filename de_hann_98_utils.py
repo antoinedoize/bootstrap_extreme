@@ -19,7 +19,7 @@ def Q_bootstrapped_quadratic_asymp_error_estimator(k1, n1_bootstrap, sample, boo
     return np.mean(q_values_list)
 
 
-def get_bootstrap_variance_de_hann_98(sample,
+def get_bootstrap_variance_de_hann_98(method, sample,
                                       nb_bootstrap,
                                       bootstrap_size,
                                       k0_opti):
