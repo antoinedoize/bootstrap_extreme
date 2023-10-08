@@ -1,0 +1,41 @@
+{
+    "name": "template_config_kulik_enhanced_v3_inv_gamma_3",
+    "format_config": "v2",
+    "function_to_run": "run_variance_vs_size_sample_from_config",
+
+    "run_variance_vs_size_sample_from_config": {
+        "inv_gamma": 3,
+        "nb_monte_carlo_steps": 50,
+        "nb_bootstrap_steps": 50,
+        "list_methods": [
+            {"method_name": "monte_carlo_10percent_ratio",
+             "method": "get_monte_carlo_variance",
+             "size_sample_bootstrap_ratio": 1,
+             "k_order_statistics_ratio": 0.1
+            },
+            {"method_name": "kulik_poisson",
+             "method": "get_bootstrap_variance_kulik",
+             "size_sample_bootstrap_ratio": 1,
+             "k_order_statistics_ratio": 0.1,
+             "weight_distribution": "poisson"
+            },
+            {"method_name": "kulik_gaussian",
+             "method": "get_bootstrap_variance_kulik",
+             "size_sample_bootstrap_ratio": 1,
+             "k_order_statistics_ratio": 0.1,
+             "weight_distribution": "gaussian"
+            },
+            {"method_name": "kulik_exponential",
+             "method": "get_bootstrap_variance_kulik",
+             "size_sample_bootstrap_ratio": 1,
+             "k_order_statistics_ratio": 0.1,
+             "weight_distribution": "exponential"
+            }
+        ],
+        "size_sample_ranges": [
+            [500,1500,100],
+            [1500,2500,200],
+            [2500,10000,1000]
+        ]
+    }
+}

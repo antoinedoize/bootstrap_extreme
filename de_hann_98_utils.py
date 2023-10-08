@@ -34,6 +34,46 @@ def get_bootstrap_variance_de_hann_98(method, sample,
     return std_estimator*k0_opti**(1/2)
 
 
+def get_bootstrap_variance_est_de_hann_98(method, sample,
+                                      nb_bootstrap,
+                                      bootstrap_size,
+                                      k0_opti):
+    method_bootstrap = method["method_bootstrap"]
+    std_estimator_list = list()
+    mom1_estimation_list = list()
+    if method_bootstrap["method_name"] == "iid":
+        for i in range(nb_bootstrap):
+            bootstrapped_sample = choices(sample, k=bootstrap_size) # On rééchantillonne
+            gamma_moment_1 = gamma_moment_1_estimator(k0_opti, bootstrapped_sample)
+            gamma_moment_2 = gamma_moment_2_estimator(k0_opti, bootstrapped_sample)
+            control_variate = gamma_moment_2 - gamma_moment_1
+            std_estimator_list.append(control_variate*k0_opti**(1/2)) # Normalization by block size root
+            mom1_estimation_list.append(gamma_moment_1)
+    elif method_bootstrap["method_name"] == "stationary":
+        for i in range(nb_bootstrap):
+            sample_size = len(sample)
+            method_block_size = {
+                "alea": method_bootstrap["alea"],
+                "size_expectancy": int(method_bootstrap["size_sample_bootstrap_ratio"]*sample_size)
+            }
+            b_size = get_random_block_size(method_block_size, sample_size)
+            bootstrap_size = b_size #Now we know the block size we adapt bootstrap size and k0_opti
+            import pdb
+            k0_opti_adapted = int(k0_opti*b_size/sample_size)
+            bootstrapped_sample = get_random_block(sample,bootstrap_size)
+            gamma_moment_1 = gamma_moment_1_estimator(k0_opti_adapted, bootstrapped_sample)
+            gamma_moment_2 = gamma_moment_2_estimator(k0_opti_adapted, bootstrapped_sample)
+            control_variate = gamma_moment_2 - gamma_moment_1
+            std_estimator_list.append(control_variate*k0_opti_adapted**(1/2)) # Normalization by block size root
+            mom1_estimation_list.append(gamma_moment_1)
+    else:
+        btstrap_name = method["method_bootstrap"]["method_name"]
+        raise ValueError(f"Method bootstrap unknown: {btstrap_name}")
+    std_estimator = np.std(std_estimator_list)
+    mom1_mean = np.mean(mom1_estimation_list)
+    return std_estimator, mom1_mean # Normalisation *k0_opti**(1/2) happens when added to std_estimation_list
+
+
 def find_argmin_Q(n1_bootstrap, sample,
                   k_min=5, k_max="default", step="default",
                   bootstrap_steps=200,

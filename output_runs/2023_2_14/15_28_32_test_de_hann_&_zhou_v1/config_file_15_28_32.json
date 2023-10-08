@@ -1,0 +1,1 @@
+{"name": "test_de_hann_&_zhou_v1", "format_config": "v1", "function_to_run": "run_de_hann_zhou_experience_from_config", "run_de_hann_zhou_experience_config": {"inv_gamma": 3, "nb_samples": 100, "nb_bootstrap_samples": 200, "size_sample": 1000}}

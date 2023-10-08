@@ -1,0 +1,38 @@
+{
+    "name": "dependant_data_checkpoint_all_methods_archi1_v7",
+    "format_config": "v6",
+    "newness": "added de hann and zhou variance estimator and smoothed bootstrap with several mc samples",
+    "function_to_run": "run_est_and_var_vs_k_dep_data_from_config",
+
+    "run_est_and_var_vs_k_dep_data_from_config": {
+        "inv_gamma": 5,
+        "distribution_type": "arch1",
+        "ma_order": "none",
+        "size_sample": 2000,
+        "nb_monte_carlo_steps": 100,
+        "nb_bootstrap_steps": 100,
+        "nb_averaging_btstrp": 100,
+        "bootstrap_type": "naive",
+        "list_methods": [
+            {"method_name": "monte_carlo",
+             "method": "get_monte_carlo_variance_est",
+             "size_sample_bootstrap_ratio": 1
+            },
+            {"method_name": "de_hann_98",
+             "method": "get_bootstrap_variance_est_de_hann_98",
+             "size_sample_bootstrap_ratio": 0.8
+            },
+            {"method_name": "kulik_poisson",
+             "method": "get_bootstrap_variance_est_kulik",
+             "size_sample_bootstrap_ratio": 0.8,
+             "weight_distribution": "poisson",
+             "kulik_downsampling_procedure": "none",
+             "dwnsmplng_choices": "global, per_block, none"
+            },
+            {"method_name": "de_haan_and_zhou",
+             "method": "get_bootstrap_variance_est_de_haan_zhou",
+             "size_sample_bootstrap_ratio": 0.8
+            }
+        ]
+    }
+}

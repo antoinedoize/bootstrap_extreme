@@ -1,0 +1,40 @@
+{
+    "name": "2023_05_09_ujnbiaised_est_inva_gamma_10_ma10",
+    "format_config": "v9",
+    "newness": "unbiaised_est, plot_biais for mc, plot only var",
+    "function_to_run": "run_est_and_var_vs_k_dep_data_from_config",
+
+    "run_est_and_var_vs_k_dep_data_from_config": {
+        "inv_gamma": 10
+        ,
+        "distribution_type": "ma",
+        "ma_order": 10,
+        "size_sample": 2000,
+        "nb_monte_carlo_steps": 300,
+        "nb_bootstrap_steps": 30,
+        "nb_averaging_btstrp": 30,
+        "bootstrap_type": "naive",
+        "list_methods": [
+            {"method_name": "monte_carlo",
+            "method": "get_monte_carlo_variance_est",
+            "method_bootstrap": {
+               "method_name": "none",
+               "size_sample_bootstrap_ratio": "none"
+            }
+            },
+            {"method_name": "monte_carlo_unbiaised_gomes",
+            "method": "get_unbiaised_monte_carlo_variance_est_gomes",
+            "method_bootstrap": {
+               "method_name": "none",
+               "size_sample_bootstrap_ratio": "none"
+            }
+            }
+        ],
+      "archives_methods_mc": {"method_name": "monte_carlo",
+      "method": "get_monte_carlo_variance_est",
+      "method_bootstrap": {
+         "method_name": "none"
+      }
+     }
+    }
+}
